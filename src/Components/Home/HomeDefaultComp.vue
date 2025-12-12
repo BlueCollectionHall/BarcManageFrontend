@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import "@/Styles/ContainerAni.css";
-import {cnByPermission} from "@/Utils/Permission.ts";
+import "@/Styles/DefaultContainer.css";
+import {cnByPermission} from "@/Utils/ManagerPermission.ts";
 import {useUserStore} from "@/Stores/UserStore.ts";
 import {storeToRefs} from "pinia";
 
@@ -28,20 +29,4 @@ const {userArchive} = storeToRefs(userStore);
 </template>
 
 <style scoped>
-.default_container {
-  animation: container_in 1s ease forwards;
-  height: 100%;
-  background-color: rgba(84, 92, 100, .5);
-  backdrop-filter: blur(5px);
-  box-shadow: white 0 0 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  color: white;
-  text-shadow: #deefff 0 0 5px;
-  .title {
-    text-align: center;
-  }
-}
 </style>
