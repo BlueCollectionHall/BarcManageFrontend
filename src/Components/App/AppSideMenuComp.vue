@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {PERMISSION} from "@/Utils/Permission.ts";
+import {ManagerPermission} from "@/Utils/ManagerPermission.ts";
 import {useUserStore} from "@/Stores/UserStore.ts";
 import {storeToRefs} from "pinia";
 
@@ -24,31 +24,31 @@ const {userArchive} = storeToRefs(userStore);
           <span>用户管理</span>
         </template>
         <!-- 不低于副馆长权限-->
-        <el-menu-item-group title="馆长、管理员" v-if="PERMISSION.ADMINISTRATOR <= userArchive.permission">
+        <el-menu-item-group title="管理员、用户" v-if="ManagerPermission.ADMINISTRATOR <= userArchive.permission">
           <el-menu-item index="UserPermission" :route="{name: 'UserPermission'}">裁撤、更换权限</el-menu-item>
         </el-menu-item-group>
         <!-- 拥有三级管理员权限-->
-        <el-menu-item-group title="用户" v-if="(userArchive.permission & PERMISSION.THI_MAINTAINER) === PERMISSION.THI_MAINTAINER">
+        <el-menu-item-group title="用户" v-if="(userArchive.permission & ManagerPermission.THI_MAINTAINER) === ManagerPermission.THI_MAINTAINER">
           <el-menu-item index="UserManage" :route="{name: 'UserManage'}">冻结、管理用户</el-menu-item>
         </el-menu-item-group>
         <!-- 拥有风纪委员权限-->
         <el-menu-item
             index="UserWarn"
-            v-if="(userArchive.permission & PERMISSION.DISCIPLINARY_COMMITTEE) === PERMISSION.DISCIPLINARY_COMMITTEE"
+            v-if="(userArchive.permission & ManagerPermission.DISCIPLINARY_COMMITTEE) === ManagerPermission.DISCIPLINARY_COMMITTEE"
             :route="{name: 'UserWarn'}">
           向用户、管理员发出警告
         </el-menu-item>
         <!-- 拥有三级管理员权限-->
         <el-menu-item
             index="UserFeedback"
-            v-if="(userArchive.permission & PERMISSION.THI_MAINTAINER) === PERMISSION.THI_MAINTAINER"
+            v-if="(userArchive.permission & ManagerPermission.THI_MAINTAINER) === ManagerPermission.THI_MAINTAINER"
             :route="{name: 'UserFeedback'}">
           用户反馈单
         </el-menu-item>
       </el-sub-menu>
 
       <!-- 拥有二级管理员权限 或者 风纪委员权限-->
-      <el-sub-menu index="Work" v-if="((userArchive.permission & PERMISSION.SEC_MAINTAINER) === PERMISSION.SEC_MAINTAINER) || ((userArchive.permission & PERMISSION.DISCIPLINARY_COMMITTEE) === PERMISSION.DISCIPLINARY_COMMITTEE)">
+      <el-sub-menu index="Work" v-if="((userArchive.permission & ManagerPermission.SEC_MAINTAINER) === ManagerPermission.SEC_MAINTAINER) || ((userArchive.permission & ManagerPermission.DISCIPLINARY_COMMITTEE) === ManagerPermission.DISCIPLINARY_COMMITTEE)">
         <template #title>
           <span>作品管理</span>
         </template>
@@ -56,13 +56,13 @@ const {userArchive} = storeToRefs(userStore);
         <!-- 拥有二级管理员权限-->
         <el-menu-item
             index="WorkBan"
-            v-if="(userArchive.permission & PERMISSION.SEC_MAINTAINER) === PERMISSION.SEC_MAINTAINER"
+            v-if="(userArchive.permission & ManagerPermission.SEC_MAINTAINER) === ManagerPermission.SEC_MAINTAINER"
             :route="{name: 'WorkBan'}">
           下架、封禁
         </el-menu-item>
         <el-menu-item
             index="WorkInspection"
-            v-if="(userArchive.permission & PERMISSION.SEC_MAINTAINER) === PERMISSION.SEC_MAINTAINER"
+            v-if="(userArchive.permission & ManagerPermission.SEC_MAINTAINER) === ManagerPermission.SEC_MAINTAINER"
             :route="{name: 'WorkInspection'}">
           人工巡检
         </el-menu-item>
@@ -70,7 +70,7 @@ const {userArchive} = storeToRefs(userStore);
         <el-menu-item index="WorkFeedback" :route="{name: 'WorkFeedback'}">作品反馈单</el-menu-item>
       </el-sub-menu>
       <!-- 拥有一级管理员权限-->
-      <el-sub-menu index="Message" v-if="(userArchive.permission & PERMISSION.FIR_MAINTAINER) === PERMISSION.FIR_MAINTAINER">
+      <el-sub-menu index="Message" v-if="(userArchive.permission & ManagerPermission.FIR_MAINTAINER) === ManagerPermission.FIR_MAINTAINER">
         <template #title>
           <span>评论、留言管理</span>
         </template>

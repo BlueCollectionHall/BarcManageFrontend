@@ -1,5 +1,5 @@
 // 定义权限常量
-export const PERMISSION = {
+export const ManagerPermission = {
     DISCIPLINARY_COMMITTEE: 1,        // 风纪委员
     FIR_MAINTAINER: 1 << 1,        // 一级管理员
     SEC_MAINTAINER: 1 << 2,        // 二级管理员
@@ -16,6 +16,11 @@ const PERMISSION_NAMES: Record<number, string> = {
     16: "副馆长",
     32: "馆长",
 };
+
+// 获取所有管理员权限选项
+export const getManagerPermissionOptions = (): Array<{value: number; label: string}> => {
+    return Object.entries(PERMISSION_NAMES).map(([value, label]) => ({value: parseInt(value), label: label}));
+}
 
 export const cnByPermission = (permission: number): Array<string> => {
     const result: Array<string> = [];

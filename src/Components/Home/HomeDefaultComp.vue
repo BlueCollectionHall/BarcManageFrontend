@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import "@/Styles/ContainerAni.css";
 import "@/Styles/DefaultContainer.css";
-import {cnByPermission} from "@/Utils/Permission.ts";
+import {cnByPermission} from "@/Utils/ManagerPermission.ts";
 import {useUserStore} from "@/Stores/UserStore.ts";
 import {storeToRefs} from "pinia";
 
