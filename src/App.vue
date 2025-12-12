@@ -22,7 +22,6 @@ const logout = () => {
 }
 
 onBeforeMount(() => {
-  console.log("beforeMount");
   // 初始化登录状态
   const token = localStorage.getItem("token");
   if (token) {
