@@ -21,3 +21,14 @@ export interface UserBasicImpl {
   created_at: Date;
   updated_at: Date;
 }
+export interface UserInfoImpl {
+  uuid: string;
+  nickname: string;
+  username: string;
+  avatar: string;
+  age: number;
+  birthday: Date;
+  gender: number;
+  identity: "USER" | "MANAGER";
+  permission: number;
+}
