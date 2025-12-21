@@ -6,7 +6,7 @@ import {baseHttp} from "@/Utils/Request.ts";
 import type {PageRequestImpl, PageResultImpl} from "@/Interfaces/PageImpl.ts";
 import type {UserArchiveImpl} from "@/Interfaces/UserImpl.ts";
 import type {ResponseImpl} from "@/Interfaces/ResponseImpl.ts";
-import {errorMessage} from "@/Utils/MessageAlert.ts";
+import {errorMessage, successMessage, warningMessage} from "@/Utils/MessageAlert.ts";
 import {timestampToCn} from "@/Utils/TimeToCn.ts";
 import {useRouter} from "vue-router";
 
@@ -17,12 +17,12 @@ interface NoticeUserArchiveImpl extends NoticeImpl {
 }
 
 const noticeList = ref<Array<NoticeUserArchiveImpl>>([]);
-const pageRequest = ref<PageRequestImpl>({page_num: 1, page_size: 10});
+const pageRequest = ref<PageRequestImpl>({page_num: 1, page_size: 5});
 const pageResult = ref<PageResultImpl<NoticeUserArchiveImpl> | null>(null);
 
 const fetchNoticeList = async () => {
   try {
-    const response = await baseHttp.post("/notice/notices_by_page", pageRequest);
+    const response = await baseHttp.post("/notice/notices_by_page", pageRequest.value);
     const data: ResponseImpl = response.data;
     // 当返回不正常时
     if (data.code !== 0) {
@@ -51,9 +51,33 @@ const fetchNoticeList = async () => {
   }
 }
 
+// 分页切换处理
+const handlePageChange = (pageNum: number) => {
+  pageRequest.value.page_num = pageNum; // 更新当前页码
+  fetchNoticeList(); // 重新获取数据
+}
+
 // 新增公告跳转
 const uploadClicked = () => {
   router.push({name: "NoticeUpload"});
+}
+
+// 点击删除公告
+const deleteClicked = async (noticeId: string) => {
+  try {
+    const response = await baseHttp.delete("/notice/delete", {params: {notice_id: noticeId}});
+    const data: ResponseImpl = response.data;
+    if (data.code === 0) successMessage(data.data);
+    else warningMessage(data.data);
+  } catch (error) {
+    console.error(error);
+    errorMessage("网络异常");
+  }
+}
+
+// 点击修改公告
+const editClicked = (noticeId: string) => {
+  router.push({name: "NoticeEdit", query: {notice_id: noticeId}});
 }
 
 onMounted(() => {
@@ -73,13 +97,25 @@ onMounted(() => {
       </div>
       <div class="notice" v-else v-for="item in noticeList" :key="item.id">
         <h3 class="title">{{item.title}}</h3>
-        <div class="avatar_nickname_time">
+        <div class="avatar_nickname_time_buttons">
           <img class="avatar" :src="item.user_archive.avatar || ''" alt="avatar"/>
           <span class="nickname">发布者：{{item.user_archive.nickname}}</span>
           <span class="time">{{timestampToCn(item.updated_at)}}</span>
+          <div class="buttons">
+            <el-button native-type="button" type="primary" @click="editClicked(item.id)">修改</el-button>
+            <el-button native-type="button" type="danger" @click="deleteClicked(item.id)">删除</el-button>
+          </div>
         </div>
       </div>
     </div>
+    <el-pagination class="pagination"
+                   background v-if="pageResult"
+                   :page-size="pageResult.page_size"
+                   :pager-count="pageResult.total_page"
+                   layout="prev, pager, next"
+                   :total="pageResult.total"
+                   :current-page="pageRequest.page_num"
+                   @current-change="handlePageChange"/>
   </div>
 </template>
 
@@ -93,6 +129,13 @@ onMounted(() => {
   box-shadow: white 0 0 5px;
   display: flex;
   flex-direction: column;
+  .pagination {
+    margin-top: auto;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .select_bar {
     border-bottom: #deefff solid 1px;
     padding: 2rem 0;
@@ -117,7 +160,7 @@ onMounted(() => {
     font-size: 1.3rem;
     border-bottom: #9b9b9b 1px solid;
   }
-  .avatar_nickname_time {
+  .avatar_nickname_time_buttons {
     display: flex;
     align-items: center;
     gap: 1rem;
