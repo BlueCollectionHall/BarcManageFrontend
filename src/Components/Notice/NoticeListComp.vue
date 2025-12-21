@@ -110,10 +110,10 @@ onMounted(() => {
   backdrop-filter: blur(.1rem);
   box-shadow: #deefff 0 0 5px;
   background-color: rgba(255, 255, 255, 0.6);
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: .5rem 2rem;
+  margin-bottom: 1rem;
   .title {
-    padding: 0 0 1rem 0;
+    padding: 0 0 .5rem 0;
     font-size: 1.3rem;
     border-bottom: #9b9b9b 1px solid;
   }
