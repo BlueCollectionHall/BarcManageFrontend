@@ -71,11 +71,19 @@ const resetClicked = () => {
 <template>
   <div class="container">
     <div class="title">
+      <h1>发布新公告</h1>
+    </div>
+    <div class="title_input">
       <span>公告标题</span>
       <el-input v-model="noticeForm.title" placeholder="请填写标题"/>
+      <div class="buttons">
+        <el-button type="primary" native-type="button" @click="uploadNotice">确认发布</el-button>
+        <el-button type="warning" >取消返回</el-button>
+      </div>
     </div>
     <div class="ql-container">
       <QuillEditor
+          class="ql-editor"
           v-model:content="noticeForm.content"
           contentType="html"
           theme="snow"
@@ -83,29 +91,38 @@ const resetClicked = () => {
           @update:content="handleEditorChange"
       />
     </div>
-    <div class="buttons">
-      <el-button type="primary" native-type="button" @click="uploadNotice">确认发布</el-button>
-      <el-button type="warning" >取消返回</el-button>
-      <el-button type="danger" native-type="button" @click="resetClicked">重新填写</el-button>
-    </div>
+
   </div>
 </template>
 
 <style scoped>
 .container {
   animation: container_in 1s ease forwards;
-  height: 100%;
-  overflow: auto;
   background-color: rgba(84, 92, 100, .5);
   backdrop-filter: blur(5px);
   box-shadow: white 0 0 5px;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   .title {
-    padding: 1rem;
+    background-color: rgba(255, 255, 255, .5);
+    padding: 0 1rem;
+    text-align: center;
+
+  }
+  .title_input {
+    color: rgba(255, 255, 255, 1);
+    text-shadow: #deefff 0 0 5px;
+    padding: .1rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
+    .buttons {
+      display: flex;
+      align-items: center;
+      text-align: center;
+    }
     span {
       text-align: center;
       min-width: 10rem;
@@ -114,9 +131,11 @@ const resetClicked = () => {
   .ql-container {
     background-color: rgba(255, 255, 255, .5);
   }
-  .buttons {
-    z-index: 1;
-    text-align: center;
-  }
+
+}
+:deep(.ql-editor) {
+  background-color: rgba(255, 255, 255, 1);
+  height: 30rem;
+  padding: 0 8px;
 }
 </style>
