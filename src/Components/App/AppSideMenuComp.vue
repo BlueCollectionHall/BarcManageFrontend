@@ -80,6 +80,7 @@ const {userArchive} = storeToRefs(userStore);
       </el-sub-menu>
       <!-- 任何管理员都能浏览-->
       <el-menu-item index="AutoWarn">自动预警</el-menu-item>
+      <el-menu-item index="Notice" :route="{name: 'Notice'}">公告通知</el-menu-item>
       <el-menu-item index="GeneralFeedback" :route="{name: 'GeneralFeedback'}">通用反馈单</el-menu-item>
     </el-menu>
   </el-aside>
