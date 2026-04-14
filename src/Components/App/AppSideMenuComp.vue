@@ -9,11 +9,11 @@ const {userArchive} = storeToRefs(userStore);
 </script>
 
 <template>
-  <el-aside width="20rem" >
+  <el-aside width="20rem" style="background-color: #545c6490; border-right: #fff 1px solid">
     <el-menu
-        style="min-height: calc(100vh - 90px); max-height: calc(100vh - 90px); background-color: #545c6490; overflow: auto;"
+        style="min-height: calc(100vh - 90px); overflow: auto; border-right: none"
         active-text-color="#ffd04b"
-        background-color="#545c6490"
+        background-color="#545c6400"
         class="el-menu-vertical-demo"
         text-color="#fff"
         v-if="userArchive && userArchive.identity === 'MANAGER'"

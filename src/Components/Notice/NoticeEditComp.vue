@@ -2,18 +2,17 @@
 import "@/Styles/ContainerAni.css";
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import type {NoticeImpl} from "@/Interfaces/NoticeImpl.ts";
 import {baseHttp} from "@/Utils/Request.ts";
 import {errorMessage, successMessage, warningMessage} from "@/Utils/MessageAlert.ts";
 import type {ResponseImpl} from "@/Interfaces/ResponseImpl.ts";
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 
-const noticeForm = ref<NoticeImpl>({
-  id: "", title: "", content: "", author: "", created_at: new Date(), updated_at: new Date()
-});
+const noticeForm = ref<NoticeImpl | null>(null);
 
 // 编辑器配置
 const editorOptions = ref({
@@ -34,42 +33,58 @@ const editorOptions = ref({
 const handleEditorChange = (html: string) => {
   console.log(html);
   // 过滤危险标签（可选）
-  noticeForm.value.content = html.replace(/<script.*?>.*?<\/script>/gis, '')
+  if (noticeForm.value) {
+    noticeForm.value.content = html.replace(/<script.*?>.*?<\/script>/gis, '');
+  }
 }
 
-// 发布公告
-const uploadNotice = async () => {
-  if (noticeForm.value.title.length === 0) {
-    warningMessage("标题不能为空");
-    return;
+// 获取公告内容
+const fetchNotice = async (notice_id: string) => {
+  try {
+    const response = await baseHttp.get("/notice/only", {params: {notice_id}});
+    const data: ResponseImpl = response.data;
+    if (data.code === 0) {
+      noticeForm.value = data.data;
+    } else warningMessage(data.data);
+  } catch (error) {
+    console.error(error);
+    errorMessage("网络异常");
   }
-  if (noticeForm.value.content.length === 0) {
-    warningMessage("内容不能为空");
+}
+
+// 修改公告
+const updateNotice = async () => {
+  if (!noticeForm.value) {
+    errorMessage("公告信息不存在");
     return;
   }
   try {
-    const response = await baseHttp.post("/notice/upload", noticeForm.value, {
-      headers: {Authorization: localStorage.getItem("token")}
-    });
+    const response = await baseHttp.put("/notice/update", noticeForm.value, {headers: {Authorization: localStorage.getItem("token")}});
     const data: ResponseImpl = response.data;
     if (data.code === 0) {
       successMessage(data.data);
       router.back();
-    } else warningMessage(data.data);
+    }
+    else warningMessage(data.data);
   } catch (error) {
     console.error(error);
-    errorMessage("网络错误");
+    errorMessage("网络异常");
   }
 }
 
-// 重置按钮点击
-const resetClicked = () => {
-  noticeForm.value.title = "";
-}
+onMounted(() => {
+  const noticeId = route.query.notice_id as string | null | undefined;
+  if (noticeId) {
+    fetchNotice(noticeId);
+  } else {
+    errorMessage("公告ID参数不存在！");
+    router.back();
+  }
+})
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" v-if="noticeForm">
     <div class="title">
       <h1>发布新公告</h1>
     </div>
@@ -77,7 +92,7 @@ const resetClicked = () => {
       <span>公告标题</span>
       <el-input v-model="noticeForm.title" placeholder="请填写标题"/>
       <div class="buttons">
-        <el-button type="primary" native-type="button" @click="uploadNotice">确认发布</el-button>
+        <el-button type="primary" native-type="button" @click="updateNotice">确认修改</el-button>
         <el-button type="warning" >取消返回</el-button>
       </div>
     </div>
@@ -91,8 +106,8 @@ const resetClicked = () => {
           @update:content="handleEditorChange"
       />
     </div>
-
   </div>
+  <div class="container" v-else>加载中…</div>
 </template>
 
 <style scoped>
